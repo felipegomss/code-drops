@@ -73,35 +73,35 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="max-w-7xl m-auto p-4 h-screen">
-        <div className="grid grid-cols-3 gap-4 h-full">
-          <Skeleton className="grid md:col-span-2 md:row-span-4 h-full"></Skeleton>
+      <div className="h-screen p-4 m-auto max-w-7xl">
+        <div className="grid h-full grid-cols-3 gap-4">
+          <Skeleton className="grid h-full md:col-span-2 md:row-span-4"></Skeleton>
 
-          <Skeleton className="md:col-span-1 md:row-span-4 bg-slate-800 text-slate-50 h-full"></Skeleton>
+          <Skeleton className="h-full md:col-span-1 md:row-span-4 bg-slate-800 text-slate-50"></Skeleton>
 
-          <Skeleton className="md:col-span-3 md:row-span-1 h-full"></Skeleton>
+          <Skeleton className="h-full md:col-span-3 md:row-span-1"></Skeleton>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl m-auto p-4 h-screen">
-      <div className="grid md:grid-cols-3 gap-4 w-full m-auto">
+    <div className="h-screen p-4 m-auto max-w-7xl">
+      <div className="grid w-full gap-4 m-auto md:grid-cols-3">
         <Card className="grid md:col-span-2 md:row-span-4 ">
           <CardHeader>
             <AspectRatio ratio={16 / 9} className="bg-muted">
               <Image
                 src={featured.image_url}
-                alt="Photo by Drew Beamer"
+                alt=" "
                 layout="fill"
                 objectFit="cover"
               />
             </AspectRatio>
           </CardHeader>
-          <CardContent className="grid md:grid-cols-2 gap-4">
+          <CardContent className="grid gap-4 md:grid-cols-2">
             <div>
-              <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
+              <h1 className="text-4xl font-extrabold tracking-tight scroll-m-20 lg:text-5xl">
                 {featured.title}
               </h1>
             </div>
@@ -117,15 +117,15 @@ export default function Home() {
         </Card>
         <Card className="md:col-span-1 md:row-span-4 bg-slate-800 text-slate-50">
           <CardContent className="pt-6">
-            <h2 className="scroll-m-20 pb-2 text-3xl text-yellow-500 font-semibold tracking-tight first:mt-0">
+            <h2 className="pb-2 text-3xl font-semibold tracking-tight text-yellow-500 scroll-m-20 first:mt-0">
               New
             </h2>
             <ul>
               {news.map((newsItem, index) => (
-                <li key={index}>
+                <li key={index} className="group">
                   <a href={newsItem.url} target="_blank">
                     <div className="py-6">
-                      <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
+                      <h4 className="text-xl font-semibold tracking-tight scroll-m-20 group-hover:text-yellow-300">
                         {newsItem.title}
                       </h4>
                       <p className="text-sm text-muted-foreground">
@@ -133,7 +133,7 @@ export default function Home() {
                       </p>
                     </div>
                   </a>
-                  {index !== news.length - 1 && <Separator />}{" "}
+                  {index !== news.length - 1 && <Separator />}
                 </li>
               ))}
             </ul>
@@ -141,9 +141,12 @@ export default function Home() {
         </Card>
         <Card className="md:col-span-3 md:row-span-1">
           <CardContent className="pt-6">
-            <ul className="grid md:grid-cols-3 gap-4">
+            <ul className="grid gap-4 md:grid-cols-3">
               {podium.slice(1).map((podiumItem, index) => (
-                <li key={index} className="h-full">
+                <li
+                  key={index}
+                  className="h-full duration-150 ease-in-out group hover:scale-95"
+                >
                   <a
                     className="grid h-full grid-cols-3 gap-4"
                     href={podiumItem.url}
@@ -152,17 +155,17 @@ export default function Home() {
                     <AspectRatio ratio={16 / 0} className="bg-muted">
                       <Image
                         src={podiumItem.image_url}
-                        alt="Photo by Drew Beamer"
+                        alt=" "
                         layout="fill"
                         objectFit="cover"
                       />
                     </AspectRatio>
-                    <div className="col-span-2 h-full">
-                      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight text-muted-foreground pb-2">
+                    <div className="h-full col-span-2">
+                      <h3 className="pb-2 text-2xl font-semibold tracking-tight scroll-m-20 text-muted-foreground group-hover:text-yellow-500">
                         0{index + 1}
                       </h3>
 
-                      <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
+                      <h4 className="text-xl font-semibold tracking-tight scroll-m-20">
                         {podiumItem.title.slice(0, 32)}...
                       </h4>
                       <p className="text-sm text-muted-foreground">
