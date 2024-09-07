@@ -245,8 +245,8 @@ export default function Home() {
             );
           })}
           <p className="leading-7 [&:not(:first-child)]:mt-6">
-            You've reached the end of the list, but don't worry—new items will
-            be coming soon!
+            You&apos;ve reached the end of the list, but don&apos;t worry—new
+            items will be coming soon!
           </p>
         </div>
       </div>
