@@ -15,6 +15,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import axios from "axios";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { format, formatDistance, formatRelative, subDays } from "date-fns";
 
 const URL =
   "https://api.hackertab.dev/engine/feed/get?tags=android,artificial+intelligence,data+science,devops,go,java,javascript,kotlin,machine+learning,powershell,python,swift,typescript&limit=50";
@@ -36,12 +37,13 @@ export default function Home() {
   const [headlines, setHeadlines] = useState<Headline[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [visibleCount, setVisibleCount] = useState<number>(10); // Controla quantos itens estão visíveis
 
   useEffect(() => {
     const fetchHeadlines = async () => {
       try {
         const response = await axios.get<Headline[]>(URL);
-        // Filtra e salva apenas as manchetes com imagem
+
         const headlinesWithImage = response.data.filter(
           (headline) => headline.image_url
         );
@@ -55,8 +57,21 @@ export default function Home() {
         setLoading(false);
       }
     };
-
     fetchHeadlines();
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        window.innerHeight + window.scrollY >=
+        document.documentElement.scrollHeight - 100
+      ) {
+        setVisibleCount((prevCount) => prevCount + 10);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const sortedHeadlines: Headline[] = [...headlines].sort(
@@ -86,7 +101,7 @@ export default function Home() {
   }
 
   return (
-    <div className="h-screen p-4 m-auto max-w-7xl">
+    <div className="h-screen p-4 m-auto space-y-6 max-w-7xl">
       <div className="grid w-full gap-4 m-auto md:grid-cols-3">
         <Card className="grid md:col-span-2 md:row-span-4 ">
           <CardHeader>
@@ -107,7 +122,7 @@ export default function Home() {
             </div>
             <div className="grid grid-rows-2 gap-4">
               <p className="leading-7 [&:not(:first-child)]:mt-6">
-                {featured.description.slice(0, 128)}...
+                {featured.description?.slice(0, 128)}...
               </p>
               <a className="w-fit" href={featured.url} target="_blank">
                 <Button className="capitalize">Read More</Button>
@@ -129,7 +144,7 @@ export default function Home() {
                         {newsItem.title}
                       </h4>
                       <p className="text-sm text-muted-foreground">
-                        {newsItem.description.slice(0, 64)}...
+                        {newsItem.description?.slice(0, 64)}...
                       </p>
                     </div>
                   </a>
@@ -157,6 +172,7 @@ export default function Home() {
                         src={podiumItem.image_url}
                         alt=" "
                         layout="fill"
+                        sizes="100"
                         objectFit="cover"
                       />
                     </AspectRatio>
@@ -169,7 +185,7 @@ export default function Home() {
                         {podiumItem.title.slice(0, 32)}...
                       </h4>
                       <p className="text-sm text-muted-foreground">
-                        {podiumItem.description.slice(0, 64)}...
+                        {podiumItem.description?.slice(0, 64)}...
                       </p>
                     </div>
                   </a>
@@ -178,6 +194,61 @@ export default function Home() {
             </ul>
           </CardContent>
         </Card>
+      </div>
+      <div>
+        <h2 className="pb-2 text-3xl font-semibold tracking-tight scroll-m-20 first:mt-0">
+          Recently
+        </h2>
+        <div className="grid w-full gap-4 m-auto">
+          {headlines.slice(0, visibleCount).map((item) => {
+            return (
+              <Card key={item.id} className=" min-h-32">
+                <a
+                  className="grid h-full grid-cols-3 gap-4 p-4"
+                  href={item.url}
+                  target="_blank"
+                >
+                  <AspectRatio ratio={16 / 0} className="bg-muted">
+                    <Image
+                      src={item.image_url}
+                      alt=" "
+                      layout="fill"
+                      sizes="100"
+                      objectFit="cover"
+                    />
+                  </AspectRatio>
+                  <div className="h-full col-span-2">
+                    <div className="flex gap-1">
+                      {item.tags.slice(0, 4).map((tag, index) => {
+                        return (
+                          <div className="text-sm font-semibold" key={index}>
+                            #{tag}
+                          </div>
+                        );
+                      })}
+                    </div>
+                    <h4 className="text-xl font-semibold tracking-tight scroll-m-20">
+                      {item.title}
+                    </h4>
+                    <p className="text-sm text-muted-foreground">
+                      {item.description?.slice(0, 32)}...
+                    </p>
+                    <p className="leading-7 [&:not(:first-child)]:mt-6">
+                      {formatRelative(
+                        subDays(new Date(item.published_at).toISOString(), 3),
+                        new Date()
+                      )}
+                    </p>
+                  </div>
+                </a>
+              </Card>
+            );
+          })}
+          <p className="leading-7 [&:not(:first-child)]:mt-6">
+            You've reached the end of the list, but don't worry—new items will
+            be coming soon!
+          </p>
+        </div>
       </div>
     </div>
   );
